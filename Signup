@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<header>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Rammetto+One" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One|Rammetto+One|Sedgwick+Ave+Display" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Merienda+One|Press+Start+2P|Rammetto+One|Sedgwick+Ave+Display" rel="stylesheet">
+</header>
+
+<body>
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+  <div id="forms">
+  <div class="form-group">
+    <h1 id="title">Signup Page</h1>
+    <label id="1" for="fname"></label>
+    <input type="text" class="form-control" id="fname" placeholder="Enter first name" value="<?php echo $fname ?>" >
+    <link href="https://fonts.googleapis.com/css?family=Merienda+One|Nosifer|Press+Start+2P|Rammetto+One|Sedgwick+Ave+Display" rel="stylesheet">
+
+  </div>
+  <div class="form-group">
+    <label for="lname"></label>
+    <input type="text" class="form-control" id="pwd" placeholder="Enter Last Name" value ="<?php echo $lname ?>" >
+  </div>
+  <div class="form-group">
+    <label for="email"></label>
+    <input type="email" class="form-control" id="pwd" placeholder="Enter Email" value = "<?php echo $email ?>" >
+  </div>
+  <div class="form-group">
+    <label for="phone"></label>
+    <input type="text" class="form-control" id="pwd" placeholder="Enter Phone number" value = "<?php echo $phone ?>" >
+  </div>
+  <div class="form-group">
+    <label for="date"></label>
+    <input type="text" class="form-control" id="pwd" placeholder="mm/dd/yy" value = "<?php echo $date ?>" >
+  </div>
+  <div class="form-group">
+    <label for="gender"></label>
+    <input type="text" class="form-control" id="pwd" placeholder="Gender" value = "<?php echo $gender ?>" >
+  </div>
+  
+  <button type="submit" id="button">Submit</button>
+  </div>
+</form>
+</body>
+</html>
+
+<style>
+
+#forms {
+  margin-top: 3%;
+  height: 600px;
+  width: 700px;
+  background-color: rgba(156, 162, 255, .2);
+  border: 2px dashed #E55346;
+  border-radius: 3%;
+}
+div {
+    margin: auto;
+    width: 50%;
+    padding-top: 10px;
+    
+}
+::placeholder {
+  color: #E55346;
+  font-family: Work Sans;
+  padding-left: 10px;
+  font-weight: bold;
+  
+}
+input {
+  background-color: rgba(255, 255, 255, .7);
+  border: 1.5px dashed #E55346;
+}
+#1 {
+  padding-top: 100px;
+}
+#fname {
+  margin-top: 22px;
+}
+.form-group {
+  padding-top: 35px;
+  text-align: center;
+  margin-left: 160px;
+  color: #E55346;
+  font-family: Work Sans;
+  font-size: 100%;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+#button {
+  margin-left: 180px;
+  margin-top: 30px;
+  padding: 10px;
+  width: 150px;
+  height: 50px;
+ font-family: 'Press Start 2P';  color: #E55346;
+  border: 2px dashed #E55346;
+  font-size: 110%;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 20px;
+    }
+#button:hover{
+  color: white;
+  background-color: #E55346;
+  transition: 1s;
+}
+
+.form-control {
+  height: 35px;
+  width: 300px;
+}
+html {
+  background-image: url("https://media.giphy.com/media/Fe22CajsYBJio/giphy.gif");
+  background-size: 80;
+}
+#title{ 
+  color: #E55346;
+  font-family: 'Press Start 2P';
+  margin-top: -10px;
+  text-align: center;
+  font-size: 160%;
+  font-weight: bold;
+}
+
+  
+
+  </style>
+<?php
+error_reporting(E_ALL); ini_set('display_errors', '1');
+// define variables and set to empty values
+
+//Validation of email
+$emailErr = "";
+$fname = $lname = $email = $phone = $date = $gender = "";
+
+class TableRows extends RecursiveIteratorIterator { 
+    function __construct($it) { 
+        parent::__construct($it, self::LEAVES_ONLY); 
+    }
+
+    function current() {
+        return "<td style='width: 150px; border: 1px solid black;'>" . parent::current(). "</td>";
+    }
+
+    function beginChildren() { 
+        echo "<tr>"; 
+    } 
+
+    function endChildren() { 
+        echo "</tr>" . "\n";
+    } 
+} 
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  if (empty($_POST["email"])) {
+    $emailErr = "Email is required";
+  } 
+  else {
+    $email = test_input($_POST["email"]);
+    // check if e-mail address is well-formed
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "Invalid email format"; 
+    }
+  }
+
+  
+  if (!empty($_POST["email"])) {
+    $servername = "sql.njit.edu";
+    $username = "sge5";
+    $password = "eiB3WkRZ";
+    $dbname = "sge5";
+
+    try {
+      $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+      echo "Connected Successfully! <br>";
+      $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $stmt = $conn->prepare("SELECT email FROM accounts WHERE email = '$email'"); 
+      $stmt->execute();
+
+      // set the resulting array to associative
+      $result = $stmt->setFetchMode(PDO::FETCH_ASSOC); 
+
+      $v = '';
+      foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) { 
+        echo $v;
+      }
+
+      if ($v != ''){
+        echo "<br>Email has already been used.";    
+      }
+      else{
+        echo "thank you for the email dick";
+      }
+      }
+  
+  /*else {
+    $sql = "INSERT INTO accounts (fname, lname, email, phone, birthday, gender)
+      VALUES ($fname, $lname, $email, $phone, $birthday, $gender)";
+      // use exec() because no results are returned
+      $conn->exec($sql);
+      echo "New record created successfully";
+  }*/
+
+    catch(PDOException $e) {
+      echo "Error: " . $e->getMessage();
+    }
+    $conn = null;
+  
+  }
+
+  }
+  
+  
+/*  else {
+    $servername = "sql2.njit.edu";
+    $username = "jcm44";
+    $password = "lq40ntX5";
+    $dbname = "jcm44";
+
+    try {
+      $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+      // set the PDO error mode to exception
+      $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $sql = "INSERT INTO accounts (fname, lname, email, phone, birthday, gender)
+      VALUES ($fname, $lname, $email, $phone, $birthday, $gender)";
+      // use exec() because no results are returned
+      $conn->exec($sql);
+      echo "New record created successfully";
+    }
+    catch(PDOException $e) {
+      echo $sql . "<br>" . $e->getMessage();
+    }
+
+    $conn = null;
+  } */
+
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+?>
