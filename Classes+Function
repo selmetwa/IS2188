@@ -138,9 +138,9 @@ echo "Connected successfully! <br>";
 }
 $user = new User();
 $user->displayAllUser();
-$user->deleteUser(450);
-$user->insertUser(450, 'selmetwa@gmail.com', 'Sherif', 'Elmetwally', '', '1998-20-18', 'male', 'password');
-$user->updatePassword(2, '2222');
+$user->deleteUser(5);
+$user->insertUser(5, 'selmetwa@gmail.com', 'Sherif', 'Elmetwally', '', '1998-20-18', 'male', 'password');
+$user->updatePassword(2, '1234');
 ?>
 
 <style>
